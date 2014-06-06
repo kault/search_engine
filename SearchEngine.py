@@ -87,12 +87,26 @@ def lookup(index, word):
 
 # Uses .split() on the source page, garnering keywords. These keywords are
 # then added to the index
-def add_page_to_index(index, url, content):
-    list_of_words = content.split()
-    for word in list_of_words:
-        add_to_index(index, word, url)
+def record_user_click(index, keyword, url):
+    urls = lookup(index, keyword)
+    if urls:
+        for entry in urls:
+            if entry[0] == url:
+                entry[1] = entry[1]+1
 
+def add_to_index(index, keyword, url):
+    # format of index: [[keyword, [[url, count], [url, count],..]],...]
+    for entry in index:
+        if entry[0] == keyword:
+            for urls in entry[1]:
+                if urls[0] == url:
+                    return
+            entry[1].append([url,0])
+            return
+    # not found, add new keyword to index
+    index.append([keyword, [[url,0]]])
 
+    
 ## Takes a seed page, crawls to specified max_depth
 ## Max depth of 0 returns page, 1 returns page + its links
 #def crawl_web(seed, max_depth):
